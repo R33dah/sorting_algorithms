@@ -1,73 +1,88 @@
 #include "sort.h"
-/* C++ Program for Bitonic Sort. Note that this program
-works only when size of input is a power of 2. */
-#include<bits/stdc++.h>
-using namespace std;
 
-/*The parameter dir indicates the sorting direction, ASCENDING
-or DESCENDING; if (a[i] > a[j]) agrees with the direction,
-then a[i] and a[j] are interchanged.*/
-void compAndSwap(int a[], int i, int j, int dir)
-{
-	if (dir==(a[i]>a[j]))
-		swap(a[i],a[j]);
-}
+/**
+* bitonic_sort - Implements bitonic sort
+* @array: pointer
+* @size: zu size of array
+*/
 
-/*It recursively sorts a bitonic sequence in ascending order,
-if dir = 1, and in descending order otherwise (means dir=0).
-The sequence to be sorted starts at index position low,
-the parameter cnt is the number of elements to be sorted.*/
-void bitonicMerge(int a[], int low, int cnt, int dir)
+void bitonic_sort(int *array, size_t size)
 {
-	if (cnt>1)
+	/* guard */
+	if (array == NULL || size < 2)
 	{
-		int k = cnt/2;
-		for (int i=low; i<low+k; i++)
-			compAndSwap(a, i, i+k, dir);
-		bitonicMerge(a, low, k, dir);
-		bitonicMerge(a, low+k, k, dir);
+		return;
 	}
+	dohalf(array, 1, size, size);
 }
 
-/* This function first produces a bitonic sequence by recursively
-	sorting its two halves in opposite sorting orders, and then
-	calls bitonicMerge to make them in the same order */
-void bitonic_sort(int*array,int low, int cnt, int dir)
+/**
+* dohalf - Split array
+* @array: pointer
+* @flag: int 0 or 1
+* @size: zu
+* @initsize: full size of array
+*/
+
+void dohalf(int *array, int flag, size_t size, size_t initsize)
 {
-	if (cnt>1)
+	size_t half = (size / 2);
+
+	if (size < 2)
 	{
-		int k = cnt/2;
-
-		// sort in ascending order since dir here is 1
-		bitonicSort(a, low, k, 1);
-
-		// sort in descending order since dir here is 0
-		bitonicSort(a, low+k, k, 0);
-
-		// Will merge whole sequence in ascending order
-		// since dir=1.
-		bitonicMerge(a,low, cnt, dir);
+		return;
 	}
+
+	/* Merging operation up or down according to flag */
+	printf("Merging [%lu/%lu] (%s):\n", size, initsize,
+		(flag == 1) ? "UP" : "DOWN");
+	print_array(array, size);
+	/* recursion up */
+	dohalf(array, 1, half, initsize);
+	/* recusrsion down */
+	dohalf((array + half), 0, half, initsize);
+	/* join in recursion */
+	merge(array, flag, size);
+	/* show result */
+	printf("Result [%lu/%lu] (%s):\n", size, initsize,
+		(flag == 1) ? "UP" : "DOWN");
+	print_array(array, size);
 }
 
-/* Caller of bitonicSort for sorting the entire array of
-length N in ASCENDING order */
-void sort(int a[], int N, int up)
+/**
+* merge - do the merge
+* @array: pointer
+* @flag: set up or down
+* @size: array max
+*/
+
+void merge(int *array, int flag, size_t size)
 {
-	bitonicSort(a,0, N, up);
-}
+	size_t i, gap;
+	int aux;
 
-// Driver code
-int main()
-{
-	int a[]= {3, 7, 4, 8, 6, 2, 1, 5};
-	int N = sizeof(a)/sizeof(a[0]);
+	/* split again */
+	size_t half = size / 2;
 
-	int up = 1; // means sort in ascending order
-	sort(a, N, up);
+	if (size < 2)
+	{
+		return;
+	}
 
-	printf("Sorted array: \n");
-	for (int i=0; i<N; i++)
-		printf("%d ", a[i]);
-	return 0;
+	gap = size / 2;
+
+	for (i = 0; i < gap; i++)
+	{
+		if ((array[i] > array[i + gap]) == flag)
+		{
+			/* do the swap */
+			aux = array[i];
+			array[i] = array[i + gap];
+			array[i + gap] = aux;
+		}
+	}
+
+	/* recursion merge */
+	merge(array, flag, half);
+	merge((array + half), flag, half);
 }
