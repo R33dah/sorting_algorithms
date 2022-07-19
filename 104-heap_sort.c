@@ -20,7 +20,7 @@ void heap_sort(int*array, size_t size);
                 temp = heap[root];
                 heap[root] = heap[c];
                 heap[c] = temp;
-	    }
+            }
             c = root;
         } while (c != 0);
     }
