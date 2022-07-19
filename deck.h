@@ -1,13 +1,17 @@
 #ifndef DECK_H
 #define DECK_H
 
+#include "sort.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 /**
- * enum kind_e - struct for card types enum
- *
- * @SPADE: Spade type
- * @HEART: Heart type
- * @CLUB: Club type
- * @DIAMOND: Diamond types
+ * enum kind_e - enumeration of card suits
+ * @SPADE: spade suit = 0
+ * @HEART: heart suit = 1
+ * @CLUB: club suit = 2
+ * @DIAMOND: diamond suit = 3
  */
 typedef enum kind_e
 {
